@@ -143,9 +143,9 @@ const PaymentPage = () => {
 									<TableCell>{payment.user}</TableCell>
 									<TableCell>{payment.amount}</TableCell>
 									<TableCell>
-										<span className={`text-${statusColorMap[payment.status]}`}>
-											{payment.status}
-										</span>
+										{/* <span className={`text-${statusColorMap[payment.status]}`}> */}
+										{payment.status}
+										{/* </span> */}
 									</TableCell>
 									<TableCell>{payment.date}</TableCell>
 								</TableRow>

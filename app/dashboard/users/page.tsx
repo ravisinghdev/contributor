@@ -170,7 +170,7 @@ export default function UsersPage() {
 				return (
 					<Chip
 						className="capitalize border-none gap-1 text-default-600"
-						color={statusColorMap[user.status]}
+						// color={statusColorMap[user.status]}
 						size="sm"
 						variant="dot"
 					>
@@ -244,7 +244,7 @@ export default function UsersPage() {
 								closeOnSelect={false}
 								selectedKeys={statusFilter}
 								selectionMode="multiple"
-								onSelectionChange={setStatusFilter}
+								// onSelectionChange={setStatusFilter}
 							>
 								{statusOptions.map((status) => (
 									<DropdownItem key={status.uid} className="capitalize">
@@ -269,7 +269,7 @@ export default function UsersPage() {
 								closeOnSelect={false}
 								selectedKeys={visibleColumns}
 								selectionMode="multiple"
-								onSelectionChange={setVisibleColumns}
+								// onSelectionChange={setVisibleColumns}
 							>
 								{columns.map((column) => (
 									<DropdownItem key={column.uid} className="capitalize">
@@ -363,13 +363,13 @@ export default function UsersPage() {
 				},
 			}}
 			classNames={classNames}
-			selectedKeys={selectedKeys}
+			// selectedKeys={selectedKeys}
 			selectionMode="multiple"
-			sortDescriptor={sortDescriptor}
+			// sortDescriptor={sortDescriptor}
 			topContent={topContent}
 			topContentPlacement="outside"
-			onSelectionChange={setSelectedKeys}
-			onSortChange={setSortDescriptor}
+			// onSelectionChange={setSelectedKeys}
+			// onSortChange={setSortDescriptor}
 		>
 			<TableHeader columns={headerColumns}>
 				{(column) => (
@@ -386,7 +386,7 @@ export default function UsersPage() {
 				{(item) => (
 					<TableRow key={item.id}>
 						{(columnKey) => (
-							<TableCell>{renderCell(item, columnKey)}</TableCell>
+							<TableCell>{renderCell(item, columnKey.toString())}</TableCell>
 						)}
 					</TableRow>
 				)}
