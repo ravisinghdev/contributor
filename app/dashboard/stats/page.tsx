@@ -60,7 +60,7 @@ const AnalyticsPage = () => {
 					Analytics Overview
 				</h2>
 				<div className="flex gap-4">
-					<DateRangePicker onChange={setSelectedRange} />
+					<DateRangePicker />
 					<Dropdown>
 						<DropdownTrigger>
 							<button className="bg-default-50 px-4 py-2 rounded-md flex items-center gap-2">
@@ -68,9 +68,9 @@ const AnalyticsPage = () => {
 							</button>
 						</DropdownTrigger>
 						<DropdownMenu>
-							<DropdownItem>Last 7 Days</DropdownItem>
-							<DropdownItem>Last 30 Days</DropdownItem>
-							<DropdownItem>Custom Range</DropdownItem>
+							<DropdownItem key={1}>Last 7 Days</DropdownItem>
+							<DropdownItem key={2}>Last 30 Days</DropdownItem>
+							<DropdownItem key={3}>Custom Range</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>
 				</div>

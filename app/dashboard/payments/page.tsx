@@ -81,9 +81,9 @@ const PaymentPage = () => {
 							</Button>
 						</DropdownTrigger>
 						<DropdownMenu>
-							<DropdownItem>Last 7 Days</DropdownItem>
-							<DropdownItem>Last 30 Days</DropdownItem>
-							<DropdownItem>Failed Transactions</DropdownItem>
+							<DropdownItem key={1}>Last 7 Days</DropdownItem>
+							<DropdownItem key={2}>Last 30 Days</DropdownItem>
+							<DropdownItem key={3}>Failed Transactions</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>
 				</div>
