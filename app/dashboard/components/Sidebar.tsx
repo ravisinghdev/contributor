@@ -1,15 +1,15 @@
 "use client";
 
+import { useState } from "react";
+
 import {
 	FaHome,
 	FaUsers,
 	FaChartPie,
 	FaCreditCard,
 	FaBell,
+	FaHandHolding,
 } from "react-icons/fa";
-
-import { useState } from "react";
-
 import {
 	Navbar,
 	NavbarBrand,
@@ -18,9 +18,6 @@ import {
 	NavbarItem,
 } from "@heroui/navbar";
 import { Link } from "@heroui/link";
-
-import { usePathname } from "next/navigation";
-
 import {
 	Dropdown,
 	DropdownItem,
@@ -28,13 +25,15 @@ import {
 	DropdownTrigger,
 } from "@heroui/dropdown";
 import { Avatar } from "@heroui/avatar";
-import { SearchIcon } from "@/components/icons";
 import { Input } from "@heroui/input";
+import { useDisclosure } from "@heroui/modal";
+
+import { usePathname } from "next/navigation";
+import { SearchIcon } from "@/components/icons";
 import clsx from "clsx";
 
-import { link as linkStyles } from "@heroui/theme";
-import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
+import NotificationPopover from "./NotificationPanel";
 
 const menuItems = [
 	{ name: "Home", icon: <FaHome />, link: "/dashboard" },
@@ -42,6 +41,7 @@ const menuItems = [
 	{ name: "Analytics", icon: <FaChartPie />, link: "/dashboard/stats" },
 	{ name: "Payments", icon: <FaCreditCard />, link: "/dashboard/payments" },
 	{ name: "Notifications", icon: <FaBell />, link: "/dashboard/notifications" },
+	{ name: "Help & Support", icon: <FaHandHolding />, link: "dashboard/help" },
 ];
 
 export default function Sidebar({ children }: { children: React.ReactNode }) {
@@ -49,10 +49,17 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
 
 	const pathname = usePathname();
 
+	const { onOpen } = useDisclosure();
+
 	return (
 		<div className="min-w-full">
 			{/* Navbar */}
-			<Navbar shouldBlockScroll className="w-full">
+			<Navbar
+				shouldBlockScroll
+				className="w-full"
+				isMenuOpen={expanded}
+				onMenuOpenChange={setExpanded}
+			>
 				{/* Sidebar opener */}
 				<NavbarContent as="div" justify="start">
 					<NavbarContent className="sm:hidden">
@@ -62,13 +69,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
 						/>
 					</NavbarContent>
 
-					<NavbarContent className="sm:hidden pr-3">
-						<NavbarBrand>
-							<p className="font-bold text-inherit">ACME</p>
-						</NavbarBrand>
-					</NavbarContent>
-
-					<NavbarContent className="hidden sm:flex pr-3">
+					<NavbarContent className="pr-3">
 						<NavbarBrand>
 							<p className="font-bold text-inherit">ACME</p>
 						</NavbarBrand>
@@ -93,8 +94,9 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
 
 				{/* Avatar Dropdown */}
 				<NavbarContent as="div" justify="end">
-					<NavbarItem className="hidden sm:flex gap-2">
+					<NavbarItem className="gap-2 flex">
 						<ThemeSwitch />
+						<NotificationPopover />
 					</NavbarItem>
 
 					<Dropdown placement="bottom-end">
@@ -133,8 +135,8 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
 			{/* Sidebar */}
 			<aside
 				id="logo-sidebar"
-				className={`fixed top-0 left-0 w-[20%] min-h-screen pt-20 transition-transform 
-          ${!expanded ? "translate-x-0 w-0" : "-translate-x-full"} 
+				className={`fixed top-0 left-0 lg:w-[20%] w-[75%] h-screen pt-20 transition-transform bg-white dark:bg-black z-10
+          ${expanded ? "translate-x-0 w-0" : "-translate-x-full"} 
          border-r border-gray-200 sm:translate-x-0`}
 				aria-label="Sidebar"
 			>
@@ -145,7 +147,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
 								key={index}
 								className={clsx(
 									`text-2xl`,
-									pathname == item.link && "p-1  rounded-lg bg-default-100"
+									pathname == item.link && "p-1  rounded-lg bg-default-50"
 								)}
 							>
 								<Link

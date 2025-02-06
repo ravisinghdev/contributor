@@ -25,6 +25,7 @@
   "@heroui/modal": "^2.2.8",
   "@heroui/navbar": "2.2.8",
   "@heroui/pagination": "^2.2.9",
+  "@heroui/popover": "^2.3.10",
   "@heroui/snippet": "2.2.10",
   "@heroui/spinner": "^2.2.7",
   "@heroui/switch": "2.2.8",

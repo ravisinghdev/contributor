@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { SVGProps } from "react";
+
 import {
 	Table,
 	TableHeader,
@@ -8,54 +9,28 @@ import {
 	TableBody,
 	TableRow,
 	TableCell,
+	Selection,
+	SortDescriptor,
 } from "@heroui/table";
-import { User } from "@heroui/user";
-import { Button } from "@heroui/button";
-
-import {
-	SearchIcon,
-	ChevronDownIcon,
-	PlusIcon,
-	VerticalDotsIcon,
-} from "@/components/icons";
-
 import { Input } from "@heroui/input";
+import { Button } from "@heroui/button";
 import {
 	Dropdown,
-	DropdownItem,
-	DropdownMenu,
 	DropdownTrigger,
+	DropdownMenu,
+	DropdownItem,
 } from "@heroui/dropdown";
-import { Chip } from "@heroui/chip";
+import { Chip, ChipProps } from "@heroui/chip";
+import { User } from "@heroui/user";
 import { Pagination } from "@heroui/pagination";
 
 import { users } from "./user";
 
-// Define types for the data
-interface User {
-	id: number;
-	name: string;
-	role: string;
-	team: string;
-	status: string;
-	age: string;
-	avatar: string;
-	email: string;
-}
+export type IconSvgProps = SVGProps<SVGSVGElement> & {
+	size?: number;
+};
 
-interface Column {
-	name: string;
-	uid: string;
-	sortable?: boolean;
-}
-
-interface StatusOption {
-	name: string;
-	uid: string;
-}
-
-// Data and configuration
-const columns: Column[] = [
+export const columns = [
 	{ name: "ID", uid: "id", sortable: true },
 	{ name: "NAME", uid: "name", sortable: true },
 	{ name: "AGE", uid: "age", sortable: true },
@@ -66,13 +41,130 @@ const columns: Column[] = [
 	{ name: "ACTIONS", uid: "actions" },
 ];
 
-const statusOptions: StatusOption[] = [
+export const statusOptions = [
 	{ name: "Active", uid: "active" },
 	{ name: "Paused", uid: "paused" },
 	{ name: "Vacation", uid: "vacation" },
 ];
 
-const statusColorMap: Record<string, string> = {
+export function capitalize(s: any) {
+	return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
+}
+
+export const PlusIcon = ({
+	size = 24,
+	width,
+	height,
+	...props
+}: IconSvgProps) => {
+	return (
+		<svg
+			aria-hidden="true"
+			fill="none"
+			focusable="false"
+			height={size || height}
+			role="presentation"
+			viewBox="0 0 24 24"
+			width={size || width}
+			{...props}
+		>
+			<g
+				fill="none"
+				stroke="currentColor"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				strokeWidth={1.5}
+			>
+				<path d="M6 12h12" />
+				<path d="M12 18V6" />
+			</g>
+		</svg>
+	);
+};
+
+export const VerticalDotsIcon = ({
+	size = 24,
+	width,
+	height,
+	...props
+}: IconSvgProps) => {
+	return (
+		<svg
+			aria-hidden="true"
+			fill="none"
+			focusable="false"
+			height={size || height}
+			role="presentation"
+			viewBox="0 0 24 24"
+			width={size || width}
+			{...props}
+		>
+			<path
+				d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+				fill="currentColor"
+			/>
+		</svg>
+	);
+};
+
+export const SearchIcon = (props: IconSvgProps) => {
+	return (
+		<svg
+			aria-hidden="true"
+			fill="none"
+			focusable="false"
+			height="1em"
+			role="presentation"
+			viewBox="0 0 24 24"
+			width="1em"
+			{...props}
+		>
+			<path
+				d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
+				stroke="currentColor"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				strokeWidth="2"
+			/>
+			<path
+				d="M22 22L20 20"
+				stroke="currentColor"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				strokeWidth="2"
+			/>
+		</svg>
+	);
+};
+
+export const ChevronDownIcon = ({
+	strokeWidth = 1.5,
+	...otherProps
+}: IconSvgProps) => {
+	return (
+		<svg
+			aria-hidden="true"
+			fill="none"
+			focusable="false"
+			height="1em"
+			role="presentation"
+			viewBox="0 0 24 24"
+			width="1em"
+			{...otherProps}
+		>
+			<path
+				d="m19.92 8.95-6.52 6.52c-.77.77-2.03.77-2.8 0L4.08 8.95"
+				stroke="currentColor"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				strokeMiterlimit={10}
+				strokeWidth={strokeWidth}
+			/>
+		</svg>
+	);
+};
+
+const statusColorMap: Record<string, ChipProps["color"]> = {
 	active: "success",
 	paused: "danger",
 	vacation: "warning",
@@ -80,23 +172,19 @@ const statusColorMap: Record<string, string> = {
 
 const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
 
-// Utility function to capitalize strings
-const capitalize = (s: string) =>
-	s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+type User = (typeof users)[0];
 
-export default function UsersPage() {
+export default function App() {
 	const [filterValue, setFilterValue] = React.useState("");
-	const [selectedKeys, setSelectedKeys] = React.useState<Set<React.Key>>(
-		new Set()
+	const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
+		new Set([])
 	);
-	const [visibleColumns, setVisibleColumns] = React.useState<Set<string>>(
+	const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
 		new Set(INITIAL_VISIBLE_COLUMNS)
 	);
-	const [statusFilter, setStatusFilter] = React.useState<Set<string>>(
-		new Set()
-	);
+	const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
 	const [rowsPerPage, setRowsPerPage] = React.useState(5);
-	const [sortDescriptor, setSortDescriptor] = React.useState({
+	const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
 		column: "age",
 		direction: "ascending",
 	});
@@ -107,8 +195,11 @@ export default function UsersPage() {
 	const hasSearchFilter = Boolean(filterValue);
 
 	const headerColumns = React.useMemo(() => {
-		if (visibleColumns.has("all")) return columns;
-		return columns.filter((column) => visibleColumns.has(column.uid));
+		if (visibleColumns === "all") return columns;
+
+		return columns.filter((column) =>
+			Array.from(visibleColumns).includes(column.uid)
+		);
 	}, [visibleColumns]);
 
 	const filteredItems = React.useMemo(() => {
@@ -119,32 +210,36 @@ export default function UsersPage() {
 				user.name.toLowerCase().includes(filterValue.toLowerCase())
 			);
 		}
-
-		if (statusFilter.size > 0 && statusFilter.size !== statusOptions.length) {
+		if (
+			statusFilter !== "all" &&
+			Array.from(statusFilter).length !== statusOptions.length
+		) {
 			filteredUsers = filteredUsers.filter((user) =>
-				statusFilter.has(user.status)
+				Array.from(statusFilter).includes(user.status)
 			);
 		}
 
 		return filteredUsers;
-	}, [filterValue, statusFilter, hasSearchFilter]);
+	}, [users, filterValue, statusFilter]);
 
 	const items = React.useMemo(() => {
 		const start = (page - 1) * rowsPerPage;
 		const end = start + rowsPerPage;
+
 		return filteredItems.slice(start, end);
 	}, [page, filteredItems, rowsPerPage]);
 
 	const sortedItems = React.useMemo(() => {
-		return [...items].sort((a, b) => {
-			const first = a[sortDescriptor.column as keyof User];
-			const second = b[sortDescriptor.column as keyof User];
+		return [...items].sort((a: User, b: User) => {
+			const first = a[sortDescriptor.column as keyof User] as number;
+			const second = b[sortDescriptor.column as keyof User] as number;
 			const cmp = first < second ? -1 : first > second ? 1 : 0;
+
 			return sortDescriptor.direction === "descending" ? -cmp : cmp;
 		});
 	}, [sortDescriptor, items]);
 
-	const renderCell = React.useCallback((user: User, columnKey: string) => {
+	const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
 		const cellValue = user[columnKey as keyof User];
 
 		switch (columnKey) {
@@ -152,10 +247,14 @@ export default function UsersPage() {
 				return (
 					<User
 						avatarProps={{ radius: "full", size: "sm", src: user.avatar }}
-						classNames={{ description: "text-default-500" }}
+						classNames={{
+							description: "text-default-500",
+						}}
 						description={user.email}
-						name={cellValue as string}
-					/>
+						name={cellValue}
+					>
+						{user.email}
+					</User>
 				);
 			case "role":
 				return (
@@ -170,7 +269,7 @@ export default function UsersPage() {
 				return (
 					<Chip
 						className="capitalize border-none gap-1 text-default-600"
-						// color={statusColorMap[user.status]}
+						color={statusColorMap[user.status]}
 						size="sm"
 						variant="dot"
 					>
@@ -199,15 +298,22 @@ export default function UsersPage() {
 		}
 	}, []);
 
-	const onRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		setRowsPerPage(Number(e.target.value));
-		setPage(1);
-	};
+	const onRowsPerPageChange = React.useCallback(
+		(e: React.ChangeEvent<HTMLSelectElement>) => {
+			setRowsPerPage(Number(e.target.value));
+			setPage(1);
+		},
+		[]
+	);
 
-	const onSearchChange = (value: string) => {
-		setFilterValue(value);
-		setPage(1);
-	};
+	const onSearchChange = React.useCallback((value?: string) => {
+		if (value) {
+			setFilterValue(value);
+			setPage(1);
+		} else {
+			setFilterValue("");
+		}
+	}, []);
 
 	const topContent = React.useMemo(() => {
 		return (
@@ -244,7 +350,7 @@ export default function UsersPage() {
 								closeOnSelect={false}
 								selectedKeys={statusFilter}
 								selectionMode="multiple"
-								// onSelectionChange={setStatusFilter}
+								onSelectionChange={setStatusFilter}
 							>
 								{statusOptions.map((status) => (
 									<DropdownItem key={status.uid} className="capitalize">
@@ -269,7 +375,7 @@ export default function UsersPage() {
 								closeOnSelect={false}
 								selectedKeys={visibleColumns}
 								selectionMode="multiple"
-								// onSelectionChange={setVisibleColumns}
+								onSelectionChange={setVisibleColumns}
 							>
 								{columns.map((column) => (
 									<DropdownItem key={column.uid} className="capitalize">
@@ -311,6 +417,8 @@ export default function UsersPage() {
 		visibleColumns,
 		onSearchChange,
 		onRowsPerPageChange,
+		users.length,
+		hasSearchFilter,
 	]);
 
 	const bottomContent = React.useMemo(() => {
@@ -318,7 +426,9 @@ export default function UsersPage() {
 			<div className="py-2 px-2 flex justify-between items-center">
 				<Pagination
 					showControls
-					classNames={{ cursor: "bg-foreground text-background" }}
+					classNames={{
+						cursor: "bg-foreground text-background",
+					}}
 					color="default"
 					isDisabled={hasSearchFilter}
 					page={page}
@@ -327,7 +437,7 @@ export default function UsersPage() {
 					onChange={setPage}
 				/>
 				<span className="text-small text-default-400">
-					{selectedKeys.size === items.length
+					{selectedKeys === "all"
 						? "All items selected"
 						: `${selectedKeys.size} of ${items.length} selected`}
 				</span>
@@ -340,12 +450,17 @@ export default function UsersPage() {
 			wrapper: ["max-h-[382px]", "max-w-3xl"],
 			th: ["bg-transparent", "text-default-500", "border-b", "border-divider"],
 			td: [
+				// changing the rows border radius
+				// first
 				"group-data-[first=true]/tr:first:before:rounded-none",
 				"group-data-[first=true]/tr:last:before:rounded-none",
+				// middle
 				"group-data-[middle=true]/tr:before:rounded-none",
+				// last
 				"group-data-[last=true]/tr:first:before:rounded-none",
 				"group-data-[last=true]/tr:last:before:rounded-none",
 			],
+			base: "max-h-[520px] overflow-scroll",
 		}),
 		[]
 	);
@@ -363,16 +478,16 @@ export default function UsersPage() {
 				},
 			}}
 			classNames={classNames}
-			// selectedKeys={selectedKeys}
+			selectedKeys={selectedKeys}
 			selectionMode="multiple"
-			// sortDescriptor={sortDescriptor}
+			sortDescriptor={sortDescriptor}
 			topContent={topContent}
 			topContentPlacement="outside"
-			// onSelectionChange={setSelectedKeys}
-			// onSortChange={setSortDescriptor}
+			onSelectionChange={setSelectedKeys}
+			onSortChange={setSortDescriptor}
 		>
 			<TableHeader columns={headerColumns}>
-				{(column) => (
+				{(column: any) => (
 					<TableColumn
 						key={column.uid}
 						align={column.uid === "actions" ? "center" : "start"}
@@ -383,10 +498,10 @@ export default function UsersPage() {
 				)}
 			</TableHeader>
 			<TableBody emptyContent={"No users found"} items={sortedItems}>
-				{(item) => (
+				{(item: any) => (
 					<TableRow key={item.id}>
-						{(columnKey) => (
-							<TableCell>{renderCell(item, columnKey.toString())}</TableCell>
+						{(columnKey: any) => (
+							<TableCell>{renderCell(item, columnKey)}</TableCell>
 						)}
 					</TableRow>
 				)}

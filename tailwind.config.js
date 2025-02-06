@@ -14,6 +14,12 @@ export default {
         sans: ["var(--font-sans)"],
         mono: ["var(--font-mono)"],
       },
+      colors: {
+        default: {
+          0: "#000000",
+          1000: "#FFFFFF"
+        }
+      }
     },
   },
   darkMode: "class",

@@ -1,3 +1,5 @@
+"use client";
+
 import {
 	Navbar as HeroUINavbar,
 	NavbarContent,
@@ -11,15 +13,17 @@ import { Button } from "@heroui/button";
 import { Kbd } from "@heroui/kbd";
 import { Link } from "@heroui/link";
 import { Input } from "@heroui/input";
-import { link as linkStyles } from "@heroui/theme";
-import NextLink from "next/link";
 import clsx from "clsx";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { SearchIcon, Logo } from "@/components/icons";
+import { SearchIcon } from "@/components/icons";
+
+import { usePathname } from "next/navigation";
 
 export const Navbar = () => {
+	const pathname = usePathname();
+
 	const searchInput = (
 		<Input
 			aria-label="Search"
@@ -42,26 +46,48 @@ export const Navbar = () => {
 	);
 
 	return (
-		<HeroUINavbar maxWidth="xl" position="sticky">
+		<HeroUINavbar
+			maxWidth="xl"
+			position="sticky"
+			classNames={{
+				item: [
+					"flex",
+					"relative",
+					"h-full",
+					"items-center",
+					"data-[active=true]:after:content-['']",
+					"data-[active=true]:after:absolute",
+					"data-[active=true]:after:bottom-0",
+					"data-[active=true]:after:left-0",
+					"data-[active=true]:after:right-0",
+					"data-[active=true]:after:h-[2px]",
+					"data-[active=true]:after:rounded-[2px]",
+					"data-[active=true]:after:bg-primary",
+				],
+			}}
+		>
 			<NavbarContent className="basis-1/5 sm:basis-full" justify="start">
 				<NavbarBrand as="li" className="gap-3 max-w-fit">
-					<NextLink className="flex justify-start items-center gap-1" href="/">
+					<Link
+						className="flex justify-start items-center gap-1"
+						href="/"
+						color="foreground"
+					>
 						<p className="font-bold text-xl text-inherit">KCP1</p>
-					</NextLink>
+					</Link>
 				</NavbarBrand>
+			</NavbarContent>
+
+			<NavbarContent>
 				<ul className="hidden lg:flex gap-4 justify-start ml-2">
 					{siteConfig.navItems.map((item) => (
-						<NavbarItem key={item.href}>
-							<NextLink
-								className={clsx(
-									linkStyles({ color: "foreground" }),
-									"data-[active=true]:text-primary data-[active=true]:font-medium"
-								)}
-								color={item.isActive ? "primary" : "foreground"}
+						<NavbarItem key={item.href} isActive={pathname == item.href}>
+							<Link
 								href={item.href}
+								color={pathname == item.href ? "primary" : "foreground"}
 							>
 								{item.label}
-							</NextLink>
+							</Link>
 						</NavbarItem>
 					))}
 				</ul>
@@ -99,13 +125,7 @@ export const Navbar = () => {
 					{siteConfig.navItems.map((item, index) => (
 						<NavbarMenuItem key={`${item}-${index}`}>
 							<Link
-								color={
-									index === 2
-										? "primary"
-										: index === siteConfig.navMenuItems.length - 1
-											? "danger"
-											: "foreground"
-								}
+								color={pathname == item.href ? "primary" : "foreground"}
 								href={item.href}
 								size="lg"
 							>

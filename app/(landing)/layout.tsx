@@ -5,7 +5,7 @@ import Loading from "./loading";
 
 const LandingPageLayout = ({ children }: { children: React.ReactNode }) => {
 	return (
-		<div className="h-screen w-full">
+		<div className="h-screen w-full  scroll-smooth scrollbar-hide">
 			<Navbar />
 			<Suspense fallback={<Loading />}>
 				<main>{children}</main>
