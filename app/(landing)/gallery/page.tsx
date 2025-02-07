@@ -7,6 +7,9 @@ import { useState } from "react";
 import { SearchIcon } from "@/components/icons";
 import { Button } from "@heroui/button";
 
+// Toast
+import toast, { Toaster } from "react-hot-toast";
+
 const albums = [
 	{ name: "Events", folder: "events", images: ["event-1.jpg", "event-2.jpg"] },
 	{
@@ -30,6 +33,21 @@ export default function GalleryPage() {
 	const filteredAlbums = albums.filter((album) =>
 		album.name.toLowerCase().includes(searchQuery.toLowerCase())
 	);
+
+	const loadAlbums = () => {
+		try {
+			setIsLoading(true);
+			setTimeout(() => {
+				toast.error("Uh! We can't find any album...");
+			}, 3000); // Delay error message by 3 seconds
+		} catch (error: any) {
+			toast.error("Uh! Something went wrong...");
+		} finally {
+			setTimeout(() => {
+				setIsLoading(false);
+			}, 3000); // Ensure loading state remains for 3 seconds
+		}
+	};
 
 	return (
 		<section className="py-20 px-5">
@@ -119,11 +137,18 @@ export default function GalleryPage() {
 					</div>
 				</div>
 			)}
-			<div className="w-full flex items-center justify-center">
-				<Button size="lg" color="warning" variant="flat" isLoading={isLoading}>
+			<div className="w-full flex items-center justify-center mt-6">
+				<Button
+					size="lg"
+					color="warning"
+					variant="flat"
+					isLoading={isLoading}
+					onPress={loadAlbums}
+				>
 					Load More...
 				</Button>
 			</div>
+			<Toaster />
 		</section>
 	);
 }

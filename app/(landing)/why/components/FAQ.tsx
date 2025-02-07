@@ -25,19 +25,19 @@ const faqs = [
 
 export default function FAQ() {
 	return (
-		<section className="py-20 px-5 text-center">
-			<h2 className="text-3xl font-bold mb-6 text-default-900">
+		<section className="py-20 px-5">
+			<h2 className="text-3xl font-bold mb-6 text-default-900 text-center">
 				Frequently Asked Questions
 			</h2>
 			<div className="max-w-4xl mx-auto space-y-4">
 				{faqs.map((faq, index) => (
-					<Accordion key={index + 1} className="text-default-800">
+					<Accordion key={index + 1} className="text-default-900">
 						<AccordionItem
 							key={index}
 							title={faq.question}
-							className="text-default-600"
+							className="text-default-900"
 						>
-							{faq.answer}
+							<span className="ml-4">{faq.answer}</span>
 						</AccordionItem>
 					</Accordion>
 				))}

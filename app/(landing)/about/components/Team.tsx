@@ -1,7 +1,19 @@
 const teamMembers = [
-	{ name: "Ravi Kumar", role: "Founder", image: "/team/ravi.jpg" },
-	{ name: "Anita Verma", role: "Community Manager", image: "/team/anita.jpg" },
-	{ name: "Vikram Singh", role: "Finance Head", image: "/team/vikram.jpg" },
+	{
+		name: "Ravi Kumar",
+		role: "Founder",
+		image: "https://i.pravatar.cc/400?u=a042581f4e29026024d",
+	},
+	{
+		name: "Anita Verma",
+		role: "Community Manager",
+		image: "https://i.pravatar.cc/400?u=a042581f4e29026704d",
+	},
+	{
+		name: "Vikram Singh",
+		role: "Finance Head",
+		image: "https://i.pravatar.cc/400?u=a048581f4e29026701d",
+	},
 ];
 
 export default function Team() {
