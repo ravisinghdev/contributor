@@ -1,19 +1,51 @@
 "use client";
 
 import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 // Hero UI Components
 import { Input } from "@heroui/input";
-import { Checkbox } from "@heroui/checkbox";
 
 import { EyeFilledIcon, EyeSlashFilledIcon } from "@/components/icons";
 import { Link } from "@heroui/link";
 import { Button } from "@heroui/button";
 
+import toast, { Toaster } from "react-hot-toast";
+
 const Page = () => {
 	const [isVisible, setIsVisible] = useState(false);
+	const [email, setEmail] = useState<string>("");
+	const [password, setPassword] = useState<string>("");
+	const [error, setError] = useState<string>("");
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const router = useRouter();
 
 	const toggleVisibility = () => setIsVisible(!isVisible);
+
+	const handleSubmit = async () => {
+		try {
+			setError("");
+			setIsLoading(true);
+
+			const result = await signIn("credentials", {
+				email,
+				password,
+				redirect: false,
+			});
+
+			if (result?.error) {
+				toast.error("Invalid credentials");
+			} else {
+				toast.success("User logged in...");
+				router.push("/dashboard");
+			}
+		} catch (error: any) {
+			setError(error.message || "Something went wrong!");
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	return (
 		<section>
@@ -62,6 +94,7 @@ const Page = () => {
 									variant="bordered"
 									placeholder="Email..."
 									className="w-full"
+									onChange={(e) => setEmail(e.target.value)}
 								/>
 							</div>
 
@@ -86,6 +119,7 @@ const Page = () => {
 									placeholder="Enter your password"
 									type={isVisible ? "text" : "password"}
 									variant="bordered"
+									onChange={(e) => setPassword(e.target.value)}
 								/>
 							</div>
 
@@ -114,7 +148,13 @@ const Page = () => {
 							</div>
 
 							<div className="col-span-6 sm:flex sm:items-center sm:gap-4">
-								<Button size="lg" color="primary" variant="flat">
+								<Button
+									size="lg"
+									color="primary"
+									variant="flat"
+									onPress={handleSubmit}
+									isLoading={isLoading}
+								>
 									Log In
 								</Button>
 
@@ -137,6 +177,7 @@ const Page = () => {
 					</div>
 				</main>
 			</div>
+			<Toaster />
 		</section>
 	);
 };

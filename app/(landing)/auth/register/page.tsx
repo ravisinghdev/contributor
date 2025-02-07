@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import axios from "axios";
 
 // Hero UI Components
 import { Input } from "@heroui/input";
@@ -10,10 +11,37 @@ import { EyeFilledIcon, EyeSlashFilledIcon } from "@/components/icons";
 import { Link } from "@heroui/link";
 import { Button } from "@heroui/button";
 
+import toast, { Toaster } from "react-hot-toast";
+
 const Page = () => {
-	const [isVisible, setIsVisible] = useState(false);
+	const [isVisible, setIsVisible] = useState<boolean>(false);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [fullName, setFullName] = useState<string>("");
+	const [email, setEmail] = useState<string>("");
+	const [password, setPassword] = useState<string>("");
+	const [role, setRole] = useState<string>("");
 
 	const toggleVisibility = () => setIsVisible(!isVisible);
+
+	const handleSubmit = async () => {
+		try {
+			setIsLoading(true);
+
+			const res = await axios.post("/api/register", {
+				name: fullName,
+				email,
+				password,
+				role,
+			});
+
+			toast.success("Register successful...");
+			console.log("User: ", res.data.user);
+		} catch (error: any) {
+			toast.error("Oops! Something went wrong...");
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	return (
 		<section>
@@ -55,25 +83,27 @@ const Page = () => {
 							<div className="col-span-6 sm:col-span-3">
 								<Input
 									type="text"
-									id="FirstName"
-									name="first_name"
-									label="First Name"
+									// id="FirstName"
+									// name="first_name"
+									label="Role"
 									labelPlacement="inside"
 									variant="bordered"
-									placeholder="First Name"
+									placeholder="Role"
+									onChange={(e) => setRole(e.target.value)}
 								/>
 							</div>
 
 							<div className="col-span-6 sm:col-span-3">
 								<Input
 									type="text"
-									id="LastName"
-									name="last_name"
+									id="FullName"
+									name="full_name"
 									size="md"
-									label="Last Name"
+									label="Full Name"
 									labelPlacement="inside"
 									variant="bordered"
-									placeholder="Last Name"
+									placeholder="Full Name"
+									onChange={(e) => setFullName(e.target.value)}
 								/>
 							</div>
 
@@ -87,6 +117,7 @@ const Page = () => {
 									variant="bordered"
 									placeholder="Email..."
 									className="w-full"
+									onChange={(e) => setEmail(e.target.value)}
 								/>
 							</div>
 
@@ -111,6 +142,7 @@ const Page = () => {
 									placeholder="Enter your password"
 									type={isVisible ? "text" : "password"}
 									variant="bordered"
+									onChange={(e) => setPassword(e.target.value)}
 								/>
 							</div>
 
@@ -161,7 +193,13 @@ const Page = () => {
 							</div>
 
 							<div className="col-span-6 sm:flex sm:items-center sm:gap-4">
-								<Button size="lg" color="primary" variant="flat">
+								<Button
+									size="lg"
+									color="primary"
+									variant="flat"
+									isLoading={isLoading}
+									onPress={handleSubmit}
+								>
 									Create an account
 								</Button>
 
@@ -184,6 +222,7 @@ const Page = () => {
 					</div>
 				</main>
 			</div>
+			<Toaster />
 		</section>
 	);
 };
