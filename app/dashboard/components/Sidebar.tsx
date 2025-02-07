@@ -65,7 +65,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
 					<NavbarContent className="sm:hidden">
 						<NavbarMenuToggle
 							aria-label={expanded ? "Close menu" : "Open menu"}
-							onClick={() => setExpanded(!expanded)}
+							onPress={() => setExpanded(!expanded)}
 						/>
 					</NavbarContent>
 
