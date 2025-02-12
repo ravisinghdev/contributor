@@ -14,10 +14,15 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 	const router = useRouter();
 
 	useEffect(() => {
+		console.log(session?.user);
 		if (status === "unauthenticated") {
 			router.push("/auth/login");
-		} else if (session?.user.role !== "ADMIN") {
-			router.push("/dashboard/restricted");
+		} else if (status === "authenticated") {
+			if (session?.user.role === "admin") {
+				router.push("/dashboard/admin");
+			} else {
+				router.push("/dashboard/restricted");
+			}
 		}
 	}, [status, session, router]);
 

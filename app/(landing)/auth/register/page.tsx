@@ -6,41 +6,55 @@ import axios from "axios";
 // Hero UI Components
 import { Input } from "@heroui/input";
 import { Checkbox } from "@heroui/checkbox";
-
+import { Select, SelectItem } from "@heroui/select";
 import { EyeFilledIcon, EyeSlashFilledIcon } from "@/components/icons";
 import { Link } from "@heroui/link";
 import { Button } from "@heroui/button";
 
 import toast, { Toaster } from "react-hot-toast";
 
+interface IData {
+	firstName: string;
+	lastName: string;
+	username: string;
+	email: string;
+	password: string;
+	confirmPassword: string;
+	role: string;
+}
+
 const Page = () => {
 	const [isVisible, setIsVisible] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [fullName, setFullName] = useState<string>("");
-	const [email, setEmail] = useState<string>("");
-	const [password, setPassword] = useState<string>("");
-	const [role, setRole] = useState<string>("");
+	const [data, setData] = useState<IData>({
+		firstName: "",
+		lastName: "",
+		username: "",
+		email: "",
+		password: "",
+		confirmPassword: "",
+		role: "",
+	});
+	const [agree, setAgree] = useState<boolean>(false);
 
 	const toggleVisibility = () => setIsVisible(!isVisible);
 
 	const handleSubmit = async () => {
 		try {
 			setIsLoading(true);
+			const res = await axios.post("/api/register", data);
 
-			const res = await axios.post("/api/register", {
-				name: fullName,
-				email,
-				password,
-				role,
-			});
-
-			toast.success("Register successful...");
-			console.log("User: ", res.data.user);
-		} catch (error: any) {
-			toast.error("Oops! Something went wrong...");
+			console.log(res.data);
+			toast.success("User registered successfully");
+		} catch (err: any) {
+			toast.error("Something went wrong...");
 		} finally {
 			setIsLoading(false);
 		}
+	};
+
+	const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setData({ ...data, role: e.target.value });
 	};
 
 	return (
@@ -83,41 +97,69 @@ const Page = () => {
 							<div className="col-span-6 sm:col-span-3">
 								<Input
 									type="text"
-									// id="FirstName"
-									// name="first_name"
-									label="Role"
+									label="First Name"
 									labelPlacement="inside"
 									variant="bordered"
-									placeholder="Role"
-									onChange={(e) => setRole(e.target.value)}
+									placeholder="First Name"
+									onChange={(e) =>
+										setData({ ...data, firstName: e.target.value })
+									}
 								/>
 							</div>
 
 							<div className="col-span-6 sm:col-span-3">
 								<Input
 									type="text"
-									id="FullName"
-									name="full_name"
 									size="md"
-									label="Full Name"
+									label="Last Name"
 									labelPlacement="inside"
 									variant="bordered"
-									placeholder="Full Name"
-									onChange={(e) => setFullName(e.target.value)}
+									placeholder="Last Name"
+									onChange={(e) =>
+										setData({ ...data, lastName: e.target.value })
+									}
 								/>
+							</div>
+							<div className="col-span-6 sm:col-span-3">
+								<Input
+									type="text"
+									size="md"
+									label="Username"
+									labelPlacement="inside"
+									variant="bordered"
+									placeholder="Username"
+									onChange={(e) =>
+										setData({ ...data, username: e.target.value })
+									}
+								/>
+							</div>
+							<div className="col-span-6 sm:col-span-3">
+								<Select
+									className="max-w-xs"
+									label="Select your role"
+									labelPlacement="inside"
+									placeholder="Your role in dashboard"
+									variant="bordered"
+									onChange={handleSelectionChange}
+								>
+									<SelectItem value="admin" key="admin">
+										Admin
+									</SelectItem>
+									<SelectItem value="user" key="user">
+										User
+									</SelectItem>
+								</Select>
 							</div>
 
 							<div className="col-span-6 w-full">
 								<Input
 									type="email"
-									id="Email"
-									name="email"
 									label="Email..."
 									labelPlacement="inside"
 									variant="bordered"
 									placeholder="Email..."
 									className="w-full"
-									onChange={(e) => setEmail(e.target.value)}
+									onChange={(e) => setData({ ...data, email: e.target.value })}
 								/>
 							</div>
 
@@ -142,7 +184,9 @@ const Page = () => {
 									placeholder="Enter your password"
 									type={isVisible ? "text" : "password"}
 									variant="bordered"
-									onChange={(e) => setPassword(e.target.value)}
+									onChange={(e) =>
+										setData({ ...data, password: e.target.value })
+									}
 								/>
 							</div>
 
@@ -167,11 +211,14 @@ const Page = () => {
 									placeholder="Enter your password"
 									type={isVisible ? "text" : "password"}
 									variant="bordered"
+									onChange={(e) =>
+										setData({ ...data, confirmPassword: e.target.value })
+									}
 								/>
 							</div>
 
 							<div className="col-span-6">
-								<Checkbox defaultSelected>
+								<Checkbox onChange={() => setAgree(!agree)}>
 									I want to receive emails about events, product updates and
 									company announcements.
 								</Checkbox>
@@ -199,6 +246,14 @@ const Page = () => {
 									variant="flat"
 									isLoading={isLoading}
 									onPress={handleSubmit}
+									isDisabled={
+										!(
+											data.password &&
+											data.confirmPassword &&
+											data.password === data.confirmPassword &&
+											agree
+										)
+									}
 								>
 									Create an account
 								</Button>

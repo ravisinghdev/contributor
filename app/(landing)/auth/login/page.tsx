@@ -23,10 +23,18 @@ const Page = () => {
 
 	const toggleVisibility = () => setIsVisible(!isVisible);
 
-	const handleSubmit = async () => {
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
 		try {
 			setError("");
 			setIsLoading(true);
+
+			// ✅ Prevent empty email/password submission
+			if (!email || !password) {
+				toast.error("Email and password are required!");
+				setIsLoading(false);
+				return;
+			}
 
 			const result = await signIn("credentials", {
 				email,
@@ -38,10 +46,10 @@ const Page = () => {
 				toast.error("Invalid credentials");
 			} else {
 				toast.success("User logged in...");
-				router.push("/dashboard");
+				await router.push("/dashboard"); // ✅ Ensure navigation completes
 			}
 		} catch (error: any) {
-			setError(error.message || "Something went wrong!");
+			setError(error?.message ?? "Something went wrong!"); // ✅ Safe error handling
 		} finally {
 			setIsLoading(false);
 		}
@@ -83,7 +91,10 @@ const Page = () => {
 							Login to access your dashboard!...
 						</p>
 
-						<form action="#" className="mt-8 grid grid-cols-6 gap-6">
+						<form
+							onSubmit={handleSubmit}
+							className="mt-8 grid grid-cols-6 gap-6"
+						>
 							<div className="col-span-6 w-full">
 								<Input
 									type="email"
@@ -152,7 +163,7 @@ const Page = () => {
 									size="lg"
 									color="primary"
 									variant="flat"
-									onPress={handleSubmit}
+									type="submit"
 									isLoading={isLoading}
 								>
 									Log In
@@ -163,7 +174,7 @@ const Page = () => {
 										Don&#39;t have an account?
 									</p>
 									<Link
-										href="/auth/sign-up"
+										href="/auth/register"
 										color="primary"
 										underline="always"
 										showAnchorIcon

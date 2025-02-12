@@ -1,29 +1,53 @@
-import { NextResponse } from "next/server";
-import bcrypt from "bcrypt";
-import pool from "@/lib/db";
+import { NextRequest, NextResponse } from "next/server";
+import connectDb from "@/lib/db";
+import User from "@/schema/user.schema";
+import bcrypt from "bcryptjs";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+	await connectDb();
 	try {
-		const { name, email, password, role } = await req.json();
+		const { firstName, lastName, username, email, password, role } =
+			await req.json();
 
-		// Hash the password before storing it
-		const hashedPassword = await bcrypt.hash(password, 10);
+		const user = await User.findOne({
+			$or: [
+				{
+					username,
+				},
+				{ email },
+			],
+		});
 
-		// Insert user into database
-		const result = await pool.query(
-			"INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING *",
-			[name, email, hashedPassword, role || "USER"]
-		);
+		if (user) {
+			return NextResponse.json({
+				message: "User already exists",
+				success: false,
+				user,
+			});
+		}
+
+		const hashedPassword = await bcrypt.hash(password, 12);
+
+		const newUser = new User({
+			firstName,
+			lastName,
+			username,
+			email,
+			password: hashedPassword,
+			role,
+		});
+
+		await newUser.save();
 
 		return NextResponse.json({
-			message: "User created successfully",
-			user: result.rows[0],
+			message: "User has been created",
+			success: true,
+			user: newUser,
 		});
-	} catch (error) {
-		console.error("Database Error:", error);
-		return NextResponse.json(
-			{ error: "Something went wrong!" },
-			{ status: 500 }
-		);
+	} catch (error: any) {
+		return NextResponse.json({
+			error: error.message,
+			success: false,
+		});
 	}
 }
