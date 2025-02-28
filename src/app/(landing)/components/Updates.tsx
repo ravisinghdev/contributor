@@ -5,21 +5,21 @@ export default function Updates() {
 			desc: "Completed a new seating area for the park.",
 			date: "Jan 15, 2024",
 			category: "Infrastructure",
-			image: "/images/park.jpg",
+			image: "https://placehold.co/600x400/27272A/white",
 		},
 		{
 			title: "Street Lights Installed",
 			desc: "Added solar-powered street lights to improve safety.",
 			date: "Feb 02, 2024",
 			category: "Public Safety",
-			image: "/images/street-lights.jpg",
+			image: "https://placehold.co/600x400/27272A/white",
 		},
 		{
 			title: "Water Supply Improved",
 			desc: "Fixed underground water leakage issues.",
 			date: "Feb 10, 2024",
 			category: "Utilities",
-			image: "/images/water-supply.jpg",
+			image: "https://placehold.co/600x400/27272A/white",
 		},
 	];
 

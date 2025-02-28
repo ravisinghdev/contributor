@@ -4,23 +4,36 @@ import { Input } from "@heroui/input";
 import { useState } from "react";
 
 // Icons
-import { SearchIcon } from "@/components/icons";
+import { SearchIcon } from "@/src/components/icons";
 import { Button } from "@heroui/button";
 
 // Toast
 import toast, { Toaster } from "react-hot-toast";
 
 const albums = [
-	{ name: "Events", folder: "events", images: ["event-1.jpg", "event-2.jpg"] },
+	{
+		name: "Events",
+		folder: "events",
+		images: [
+			"https://placehold.co/600x400/27272A/white?text=Event+1",
+			"https://placehold.co/600x400/27272A/white?text=Event+2",
+		],
+	},
 	{
 		name: "Projects",
 		folder: "projects",
-		images: ["project-1.jpg", "project-2.jpg"],
+		images: [
+			"https://placehold.co/600x400/27272A/white?text=Projects+1",
+			"https://placehold.co/600x400/27272A/white?text=Projects+2",
+		],
 	},
 	{
 		name: "Contributions",
 		folder: "contributions",
-		images: ["contribution-1.jpg", "contribution-2.jpg"],
+		images: [
+			"https://placehold.co/600x400/27272A/white?text=Contribution+1",
+			"https://placehold.co/600x400/27272A/white?text=Contribution+2",
+		],
 	},
 ];
 
@@ -75,7 +88,7 @@ export default function GalleryPage() {
 						onClick={() => setSelectedAlbum(album.folder)}
 					>
 						<img
-							src={`/gallery/${album.folder}/${album.images[0]}`}
+							src={album.images[0]}
 							alt={album.name}
 							className="w-full h-56 object-cover"
 						/>
@@ -89,7 +102,7 @@ export default function GalleryPage() {
 			{/* Album Images Modal */}
 			{selectedAlbum && (
 				<div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50">
-					<div className="relative max-w-5xl w-full bg-white p-6 rounded-lg">
+					<div className="relative max-w-5xl w-full bg-default-50/27272A/white p-6 rounded-lg">
 						<button
 							className="absolute top-4 right-4 text-gray-800 text-2xl"
 							onClick={() => setSelectedAlbum(null)}
@@ -106,7 +119,7 @@ export default function GalleryPage() {
 								?.images.map((image, index) => (
 									<img
 										key={index}
-										src={`/gallery/${selectedAlbum}/${image}`}
+										src={image}
 										alt={image}
 										className="w-full h-40 object-cover rounded-lg cursor-pointer hover:opacity-80"
 										onClick={() =>

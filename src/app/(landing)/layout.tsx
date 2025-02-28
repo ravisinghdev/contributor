@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Footer from "./components/Footer";
-import { Navbar } from "./components/navbar";
+import Navbar from "./components/Navbar";
 import Loading from "./loading";
 import ScrollToTop from "./components/ScrollToTop";
 

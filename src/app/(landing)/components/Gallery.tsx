@@ -4,14 +4,17 @@ import { Button } from "@heroui/button";
 import { useState } from "react";
 
 const categories = {
-	Events: ["/gallery/events/event-1.jpg", "/gallery/events/event-2.jpg"],
+	Events: [
+		"https://placehold.co/600x400/27272A/white?text=Event+1",
+		"https://placehold.co/600x400/27272A/white?text=Event+2",
+	],
 	Projects: [
-		"/gallery/projects/project-1.jpg",
-		"/gallery/projects/project-2.jpg",
+		"https://placehold.co/600x400/27272A/white?text=Project+1",
+		"https://placehold.co/600x400/27272A/white?text=Project+2",
 	],
 	Contributions: [
-		"/gallery/contributions/contribution-1.jpg",
-		"/gallery/contributions/contribution-2.jpg",
+		"https://placehold.co/600x400/27272A/white?text=Contribution+1",
+		"https://placehold.co/600x400/27272A/white?text=Contribution+2",
 	],
 };
 
@@ -49,7 +52,7 @@ export default function Gallery() {
 				{Object.keys(categories).map((category) => (
 					<Button
 						key={category}
-						onClick={() =>
+						onPress={() =>
 							setSelectedCategory(category as keyof typeof categories)
 						}
 						color={selectedCategory === category ? "primary" : "default"}

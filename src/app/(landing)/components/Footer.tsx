@@ -1,4 +1,5 @@
 import { Button } from "@heroui/button";
+import { Link } from "@heroui/link";
 
 export default function Footer() {
 	return (
@@ -18,24 +19,24 @@ export default function Footer() {
 					<h3 className="text-xl font-bold mb-4">Quick Links</h3>
 					<ul className="space-y-2">
 						<li>
-							<a href="/" className="hover:text-blue-400">
+							<Link href="/" color="foreground">
 								Home
-							</a>
+							</Link>
 						</li>
 						<li>
-							<a href="/about" className="hover:text-blue-400">
+							<Link href="/about" color="foreground">
 								About
-							</a>
+							</Link>
 						</li>
 						<li>
-							<a href="/dashboard" className="hover:text-blue-400">
+							<Link href="/dashboard" color="foreground">
 								Dashboard
-							</a>
+							</Link>
 						</li>
 						<li>
-							<a href="/contact" className="hover:text-blue-400">
+							<Link href="/contact" color="foreground">
 								Contact
-							</a>
+							</Link>
 						</li>
 					</ul>
 				</div>
@@ -48,15 +49,15 @@ export default function Footer() {
 						engagement.
 					</p>
 					<div className="flex space-x-4">
-						<a href="#" className="hover:text-blue-400">
+						<Link href="#" color="foreground">
 							Facebook
-						</a>
-						<a href="#" className="hover:text-blue-400">
+						</Link>
+						<Link href="#" color="foreground">
 							Twitter
-						</a>
-						<a href="#" className="hover:text-blue-400">
+						</Link>
+						<Link href="#" color="foreground">
 							Instagram
-						</a>
+						</Link>
 					</div>
 				</div>
 			</div>
@@ -68,12 +69,12 @@ export default function Footer() {
 					reserved.
 				</p>
 				<div className="mt-2 space-x-4">
-					<a href="#" className="hover:text-blue-400">
+					<Link href="#" color="foreground">
 						Privacy Policy
-					</a>
-					<a href="#" className="hover:text-blue-400">
+					</Link>
+					<Link href="#" color="foreground">
 						Terms of Service
-					</a>
+					</Link>
 				</div>
 			</div>
 		</footer>

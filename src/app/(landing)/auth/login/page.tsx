@@ -1,60 +1,62 @@
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 // Hero UI Components
 import { Input } from "@heroui/input";
-import { Checkbox } from "@heroui/checkbox";
-import { Select, SelectItem } from "@heroui/select";
-import { EyeFilledIcon, EyeSlashFilledIcon } from "@/components/icons";
+
+import { EyeFilledIcon, EyeSlashFilledIcon } from "@/src/components/icons";
 import { Link } from "@heroui/link";
 import { Button } from "@heroui/button";
 
 import toast, { Toaster } from "react-hot-toast";
 
-interface IData {
-	firstName: string;
-	lastName: string;
-	username: string;
-	email: string;
-	password: string;
-	confirmPassword: string;
-	role: string;
-}
-
 const Page = () => {
-	const [isVisible, setIsVisible] = useState<boolean>(false);
+	const [isVisible, setIsVisible] = useState(false);
+	const [email, setEmail] = useState<string>("");
+	const [password, setPassword] = useState<string>("");
+	const [error, setError] = useState<string>("");
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [data, setData] = useState<IData>({
-		firstName: "",
-		lastName: "",
-		username: "",
-		email: "",
-		password: "",
-		confirmPassword: "",
-		role: "",
-	});
-	const [agree, setAgree] = useState<boolean>(false);
+	const router = useRouter();
 
 	const toggleVisibility = () => setIsVisible(!isVisible);
 
-	const handleSubmit = async () => {
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
 		try {
+			setError("");
 			setIsLoading(true);
-			const res = await axios.post("/api/register", data);
 
-			console.log(res.data);
-			toast.success("User registered successfully");
-		} catch (err: any) {
-			toast.error("Something went wrong...");
+			// ✅ Prevent empty email/password submission
+			if (!email || !password) {
+				toast.error("Email and password are required!");
+				setIsLoading(false);
+				return;
+			}
+
+			const result = await signIn("credentials", {
+				email,
+				password,
+				redirect: false,
+			});
+
+			if (result?.error) {
+				toast.error("Invalid credentials");
+			} else {
+				toast.success("User logged in...");
+				await router.push("/dashboard"); // ✅ Ensure navigation completes
+			}
+
+			if (result?.url) {
+				router.replace("/dashboard");
+			}
+		} catch (error: any) {
+			setError(error?.message ?? "Something went wrong!"); // ✅ Safe error handling
 		} finally {
 			setIsLoading(false);
 		}
-	};
-
-	const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		setData({ ...data, role: e.target.value });
 	};
 
 	return (
@@ -86,80 +88,28 @@ const Page = () => {
 						</a>
 
 						<h1 className="mt-6 text-2xl font-bold text-default-900 sm:text-3xl md:text-4xl">
-							Hey! Nice to meet you...
+							Hey! Welcome Back ...
 						</h1>
 
 						<p className="mt-4 leading-relaxed text-default-700">
-							Register for your dashboard of contribution
+							Login to access your dashboard!...
 						</p>
 
-						<form action="#" className="mt-8 grid grid-cols-6 gap-6">
-							<div className="col-span-6 sm:col-span-3">
-								<Input
-									type="text"
-									label="First Name"
-									labelPlacement="inside"
-									variant="bordered"
-									placeholder="First Name"
-									onChange={(e) =>
-										setData({ ...data, firstName: e.target.value })
-									}
-								/>
-							</div>
-
-							<div className="col-span-6 sm:col-span-3">
-								<Input
-									type="text"
-									size="md"
-									label="Last Name"
-									labelPlacement="inside"
-									variant="bordered"
-									placeholder="Last Name"
-									onChange={(e) =>
-										setData({ ...data, lastName: e.target.value })
-									}
-								/>
-							</div>
-							<div className="col-span-6 sm:col-span-3">
-								<Input
-									type="text"
-									size="md"
-									label="Username"
-									labelPlacement="inside"
-									variant="bordered"
-									placeholder="Username"
-									onChange={(e) =>
-										setData({ ...data, username: e.target.value })
-									}
-								/>
-							</div>
-							<div className="col-span-6 sm:col-span-3">
-								<Select
-									className="max-w-xs"
-									label="Select your role"
-									labelPlacement="inside"
-									placeholder="Your role in dashboard"
-									variant="bordered"
-									onChange={handleSelectionChange}
-								>
-									<SelectItem value="admin" key="admin">
-										Admin
-									</SelectItem>
-									<SelectItem value="user" key="user">
-										User
-									</SelectItem>
-								</Select>
-							</div>
-
+						<form
+							onSubmit={handleSubmit}
+							className="mt-8 grid grid-cols-6 gap-6"
+						>
 							<div className="col-span-6 w-full">
 								<Input
 									type="email"
+									id="Email"
+									name="email"
 									label="Email..."
 									labelPlacement="inside"
 									variant="bordered"
 									placeholder="Email..."
 									className="w-full"
-									onChange={(e) => setData({ ...data, email: e.target.value })}
+									onChange={(e) => setEmail(e.target.value)}
 								/>
 							</div>
 
@@ -184,9 +134,7 @@ const Page = () => {
 									placeholder="Enter your password"
 									type={isVisible ? "text" : "password"}
 									variant="bordered"
-									onChange={(e) =>
-										setData({ ...data, password: e.target.value })
-									}
+									onChange={(e) => setPassword(e.target.value)}
 								/>
 							</div>
 
@@ -211,32 +159,7 @@ const Page = () => {
 									placeholder="Enter your password"
 									type={isVisible ? "text" : "password"}
 									variant="bordered"
-									onChange={(e) =>
-										setData({ ...data, confirmPassword: e.target.value })
-									}
 								/>
-							</div>
-
-							<div className="col-span-6">
-								<Checkbox onChange={() => setAgree(!agree)}>
-									I want to receive emails about events, product updates and
-									company announcements.
-								</Checkbox>
-							</div>
-
-							<div className="col-span-6">
-								<p className="text-sm text-default-500">
-									By creating an account, you agree to our
-									<a href="#" className="text-default-700 underline">
-										{" "}
-										terms and conditions{" "}
-									</a>
-									and{" "}
-									<a href="#" className="text-default-700 underline">
-										privacy policy
-									</a>
-									.
-								</p>
 							</div>
 
 							<div className="col-span-6 sm:flex sm:items-center sm:gap-4">
@@ -244,31 +167,23 @@ const Page = () => {
 									size="lg"
 									color="primary"
 									variant="flat"
+									type="submit"
 									isLoading={isLoading}
-									onPress={handleSubmit}
-									isDisabled={
-										!(
-											data.password &&
-											data.confirmPassword &&
-											data.password === data.confirmPassword &&
-											agree
-										)
-									}
 								>
-									Create an account
+									Log In
 								</Button>
 
 								<div className="flex items-center justify-center space-x-2">
 									<p className="mt-4 text-sm text-default-700 sm:mt-0">
-										Already have an account?
+										Don&#39;t have an account?
 									</p>
 									<Link
-										href="/auth/login"
+										href="/auth/register"
 										color="primary"
 										underline="always"
 										showAnchorIcon
 									>
-										Log in
+										Sign Up
 									</Link>
 									.
 								</div>
