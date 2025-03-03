@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+
+// Hero UI Components
 import {
 	Navbar as HeroUINavbar,
 	NavbarContent,
@@ -20,11 +23,9 @@ import {
 import { Checkbox } from "@heroui/checkbox";
 import { Button } from "@heroui/button";
 import { Kbd } from "@heroui/kbd";
-import { Link } from "@heroui/link";
 import { Input } from "@heroui/input";
 
-import { siteConfig } from "@/src/config/site";
-import { ThemeSwitch } from "@/src/components/theme-switch";
+// Icons
 import {
 	EyeFilledIcon,
 	EyeSlashFilledIcon,
@@ -32,30 +33,49 @@ import {
 	SearchIcon,
 } from "@/src/components/icons";
 
+// Next.js
+import Link from "next/link";
+import { siteConfig } from "@/src/config/site";
+import { ThemeSwitch } from "@/src/components/theme-switch";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
-import toast from "react-hot-toast";
 import { signIn, useSession } from "next-auth/react";
+import { addToast } from "@heroui/toast";
+import clsx from "clsx";
 
 const Navbar = () => {
 	const pathname = usePathname();
+	const router = useRouter();
+
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
 	const [isVisible, setIsVisible] = useState(false);
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
-	const router = useRouter();
+	const [error, setError] = useState("");
 
 	const { data } = useSession();
 
 	const toggleVisibility = () => setIsVisible((prev) => !prev);
 
+	// ✅ Prevent full page reload by handling navigation manually
+	const handleNavigation = (event: React.MouseEvent, href: string) => {
+		event.preventDefault(); // ❌ Prevent default anchor behavior
+		router.push(href); // ✅ Use Next.js client-side navigation
+	};
+
 	const handleSubmit = async () => {
 		try {
+			setError("");
 			setIsLoading(true);
 
+			// ✅ Prevent empty email/password submission
 			if (!email || !password) {
-				toast.error("Email and password are required!");
+				addToast({
+					title: "Email and password are required!",
+					color: "danger",
+				});
+				setIsLoading(false);
 				return;
 			}
 
@@ -66,75 +86,140 @@ const Navbar = () => {
 			});
 
 			if (result?.error) {
-				toast.error("Invalid credentials");
+				addToast({
+					title: "Invalid Credentials",
+					description: "Please check your email and password",
+					color: "danger",
+				});
 			} else {
-				toast.success("User logged in...");
-				onOpenChange(); // Close modal on success
-				router.push("/dashboard");
+				addToast({
+					title: "Login Successful",
+					description: "Redirecting to dashboard...",
+					color: "success",
+				});
+				await router.push("/dashboard"); // ✅ Ensure navigation completes
 			}
-		} catch (error) {
-			toast.error("Something went wrong!");
+
+			if (result?.url) {
+				router.replace("/dashboard");
+			}
+		} catch (error: any) {
+			setError(error?.message ?? "Something went wrong!"); // ✅ Safe error handling
 		} finally {
 			setIsLoading(false);
 		}
 	};
 
-	const searchInput = (
-		<Input
-			aria-label="Search"
-			classNames={{ inputWrapper: "bg-default-100", input: "text-sm" }}
-			endContent={<Kbd className="hidden lg:inline-block">K</Kbd>}
-			labelPlacement="outside"
-			placeholder="Search..."
-			startContent={
-				<SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-			}
-			type="search"
-		/>
-	);
-
 	return (
-		<HeroUINavbar maxWidth="xl" position="sticky">
-			<NavbarContent justify="end">
-				<NavbarBrand>
-					<Link href="/" className="font-bold text-xl text-inherit">
-						KCP1
-					</Link>
-				</NavbarBrand>
-			</NavbarContent>
+		<>
+			<HeroUINavbar
+				isBordered
+				isMenuOpen={isMenuOpen}
+				onMenuOpenChange={setIsMenuOpen}
+				classNames={{
+					item: [
+						"flex",
+						"relative",
+						"h-full",
+						"items-center",
+						"data-[active=true]:after:content-['']",
+						"data-[active=true]:after:absolute",
+						"data-[active=true]:after:text-primary-600",
+					],
+				}}
+			>
+				<NavbarContent className="sm:hidden" justify="start">
+					<NavbarMenuToggle
+						aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+					/>
+				</NavbarContent>
 
-			<NavbarContent>
-				<ul className="hidden lg:flex gap-4">
-					{siteConfig.navItems.map((item) => (
-						<NavbarItem key={item.href} isActive={pathname === item.href}>
+				<NavbarContent className="sm:hidden pr-3" justify="center">
+					<NavbarBrand>
+						<p className="font-bold text-inherit">KCP1</p>
+					</NavbarBrand>
+				</NavbarContent>
+
+				<NavbarContent className="hidden sm:flex gap-4" justify="center">
+					<NavbarBrand>
+						<p className="font-bold text-inherit">KCP1</p>
+					</NavbarBrand>
+
+					{/* ✅ Fixed Navigation */}
+					{siteConfig.navItems.map((item, index) => (
+						<NavbarItem
+							key={`${item.href}-${index}`}
+							isActive={pathname === item.href}
+						>
 							<Link
 								href={item.href}
-								color={pathname === item.href ? "primary" : "foreground"}
+								className={
+									pathname == item.href
+										? "text-primary-600 font-bold"
+										: "text-default-900"
+								}
 							>
 								{item.label}
 							</Link>
 						</NavbarItem>
 					))}
-				</ul>
-			</NavbarContent>
+				</NavbarContent>
 
-			<NavbarContent justify="start" className="hidden sm:flex">
-				<NavbarItem>
-					<ThemeSwitch />
-				</NavbarItem>
+				<NavbarContent justify="end">
+					<NavbarItem className={"space-x-2"}>
+						<ThemeSwitch />
 
-				<NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
+						{/* Search Input */}
+						<Input
+							aria-label="Search"
+							classNames={{ inputWrapper: "bg-default-100", input: "text-sm" }}
+							endContent={<Kbd className="inline-block">K</Kbd>}
+							labelPlacement="outside"
+							placeholder="Search..."
+							startContent={
+								<SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
+							}
+							type="search"
+						/>
 
-				<NavbarItem className="hidden lg:flex">
-					<Button
-						onPress={data ? () => router.push("/dashboard") : onOpen}
-						variant="flat"
-						color="warning"
-					>
-						{data ? "Dashboard" : "Login"}
-					</Button>
-				</NavbarItem>
-			</NavbarContent>
+						{/* Right side button */}
+						{data?.user ? (
+							// ✅ Redirect to Dashboard when logged in
+							<Link href="/dashboard">
+								<Button color="warning" variant="flat">
+									Dashboard
+								</Button>
+							</Link>
+						) : (
+							// ✅ Open Login Modal when not logged in
+							<Button onPress={onOpen} color="warning" variant="flat">
+								Get Started
+							</Button>
+						)}
+					</NavbarItem>
+				</NavbarContent>
+
+				{/* Mobile menu */}
+				<NavbarMenu>
+					{siteConfig.navItems.map((item, index) => (
+						<NavbarMenuItem
+							key={`${item.href}-${index}`}
+							isActive={pathname === item.href}
+						>
+							<Link
+								href={item.href}
+								className={
+									pathname == item.href
+										? "text-primary-600 font-bold"
+										: "text-default-900"
+								}
+							>
+								{item.label}
+							</Link>
+						</NavbarMenuItem>
+					))}
+				</NavbarMenu>
+			</HeroUINavbar>
 
 			{/* Login Modal */}
 			<Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">
@@ -195,29 +280,7 @@ const Navbar = () => {
 					)}
 				</ModalContent>
 			</Modal>
-
-			<NavbarContent className="sm:hidden justify-end">
-				<ThemeSwitch />
-				<NavbarMenuToggle />
-			</NavbarContent>
-
-			<NavbarMenu>
-				{searchInput}
-				<div className="mx-4 mt-2 flex flex-col gap-2">
-					{siteConfig.navItems.map((item, index) => (
-						<NavbarMenuItem key={`${item.href}-${index}`}>
-							<Link
-								color={pathname === item.href ? "primary" : "foreground"}
-								href={item.href}
-								size="lg"
-							>
-								{item.label}
-							</Link>
-						</NavbarMenuItem>
-					))}
-				</div>
-			</NavbarMenu>
-		</HeroUINavbar>
+		</>
 	);
 };
 

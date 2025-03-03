@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@heroui/button";
 import { ArrowUp } from "lucide-react";
 
@@ -9,11 +10,7 @@ const ScrollToTop = () => {
 
 	useEffect(() => {
 		const toggleVisibility = () => {
-			if (window.scrollY > 300) {
-				setIsVisible(true);
-			} else {
-				setIsVisible(false);
-			}
+			setIsVisible(window.scrollY > 300);
 		};
 
 		window.addEventListener("scroll", toggleVisibility);
@@ -26,17 +23,29 @@ const ScrollToTop = () => {
 
 	return (
 		<div className="fixed right-6 bottom-6 z-50">
-			{isVisible && (
-				<Button
-					onClick={scrollToTop}
-					isIconOnly
-					radius="full"
-					size="lg"
-					className="bg-default-50 text-default-900 shadow-lg hover:bg-default-100"
-				>
-					<ArrowUp size={24} />
-				</Button>
-			)}
+			<AnimatePresence>
+				{isVisible && (
+					<motion.div
+						initial={{ opacity: 0, scale: 0.5 }}
+						animate={{ opacity: 1, scale: 1 }}
+						exit={{ opacity: 0, scale: 0.5 }}
+						transition={{ duration: 0.3, ease: "easeOut" }}
+					>
+						<Button
+							onClick={scrollToTop}
+							isIconOnly
+							radius="full"
+							size="lg"
+							className="bg-default-50 text-default-900 shadow-lg hover:bg-default-100"
+							as={motion.button}
+							whileHover={{ scale: 1.1 }}
+							whileTap={{ scale: 0.9 }}
+						>
+							<ArrowUp size={24} />
+						</Button>
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</div>
 	);
 };

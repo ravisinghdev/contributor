@@ -7,7 +7,7 @@ import { HeroUIProvider } from "@heroui/system";
 import { useRouter } from "next/navigation";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { SessionProvider } from "next-auth/react";
-import { Toaster } from "react-hot-toast";
+import { ToastProvider } from "@heroui/toast";
 
 export interface ProvidersProps {
 	children: React.ReactNode;
@@ -30,7 +30,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
 			<SessionProvider>
 				<NextThemesProvider {...themeProps}>
 					{children}
-					<Toaster />
+					<ToastProvider />
 				</NextThemesProvider>
 			</SessionProvider>
 		</HeroUIProvider>

@@ -8,10 +8,11 @@ import { Input } from "@heroui/input";
 import { Checkbox } from "@heroui/checkbox";
 import { Select, SelectItem } from "@heroui/select";
 import { EyeFilledIcon, EyeSlashFilledIcon } from "@/src/components/icons";
-import { Link } from "@heroui/link";
+import Link from "next/link";
 import { Button } from "@heroui/button";
 
 import toast, { Toaster } from "react-hot-toast";
+import { addToast } from "@heroui/toast";
 
 interface IData {
 	firstName: string;
@@ -45,9 +46,17 @@ const Page = () => {
 			const res = await axios.post("/api/register", data);
 
 			console.log(res.data);
-			toast.success("User registered successfully");
+			addToast({
+				title: "Account created successfully",
+				description: "You have been registered successfully",
+				color: "success",
+			});
 		} catch (err: any) {
-			toast.error("Something went wrong...");
+			addToast({
+				title: "Error",
+				description: err.response.data.message,
+				color: "danger",
+			});
 		} finally {
 			setIsLoading(false);
 		}
@@ -262,12 +271,7 @@ const Page = () => {
 									<p className="mt-4 text-sm text-default-700 sm:mt-0">
 										Already have an account?
 									</p>
-									<Link
-										href="/auth/login"
-										color="primary"
-										underline="always"
-										showAnchorIcon
-									>
+									<Link href="/auth/login" className="text-blue-500">
 										Log in
 									</Link>
 									.

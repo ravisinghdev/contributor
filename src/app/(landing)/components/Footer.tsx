@@ -1,82 +1,92 @@
-import { Button } from "@heroui/button";
-import { Link } from "@heroui/link";
+"use client";
+
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { FaFacebookF, FaTwitter, FaInstagram } from "react-icons/fa";
 
 export default function Footer() {
 	return (
 		<footer className="text-default-900 py-12">
 			<div className="max-w-6xl mx-auto px-5 grid grid-cols-1 md:grid-cols-3 gap-8">
 				{/* About Section */}
-				<div>
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.5 }}
+				>
 					<h3 className="text-xl font-bold mb-4">About Us</h3>
 					<p className="text-sm">
 						We are a community-driven project focused on improving our colony
 						through contributions and collective effort.
 					</p>
-				</div>
+				</motion.div>
 
 				{/* Quick Links Section */}
-				<div>
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.6 }}
+				>
 					<h3 className="text-xl font-bold mb-4">Quick Links</h3>
 					<ul className="space-y-2">
-						<li>
-							<Link href="/" color="foreground">
-								Home
-							</Link>
-						</li>
-						<li>
-							<Link href="/about" color="foreground">
-								About
-							</Link>
-						</li>
-						<li>
-							<Link href="/dashboard" color="foreground">
-								Dashboard
-							</Link>
-						</li>
-						<li>
-							<Link href="/contact" color="foreground">
-								Contact
-							</Link>
-						</li>
+						{["Home", "About", "Dashboard", "Contact"].map((item, idx) => (
+							<li key={idx}>
+								<Link
+									href={`/${item.toLowerCase()}`}
+									className="hover:underline transition-all"
+								>
+									{item}
+								</Link>
+							</li>
+						))}
 					</ul>
-				</div>
+				</motion.div>
 
 				{/* Contact & Social Media */}
-				<div>
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.7 }}
+				>
 					<h3 className="text-xl font-bold mb-4">Connect With Us</h3>
 					<p className="text-sm mb-4">
 						Follow us on our social media platforms for updates and community
 						engagement.
 					</p>
-					<div className="flex space-x-4">
-						<Link href="#" color="foreground">
-							Facebook
+					<div className="flex space-x-4 text-xl">
+						<Link href="#" className="hover:scale-110 transition-transform">
+							<FaFacebookF />
 						</Link>
-						<Link href="#" color="foreground">
-							Twitter
+						<Link href="#" className="hover:scale-110 transition-transform">
+							<FaTwitter />
 						</Link>
-						<Link href="#" color="foreground">
-							Instagram
+						<Link href="#" className="hover:scale-110 transition-transform">
+							<FaInstagram />
 						</Link>
 					</div>
-				</div>
+				</motion.div>
 			</div>
 
 			{/* Bottom Footer */}
-			<div className="mt-8 border-t border-gray-300 pt-6 text-center text-sm">
+			<motion.div
+				className="mt-8 border-t border-gray-300 pt-6 text-center text-sm"
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={{ duration: 0.8 }}
+			>
 				<p>
 					© {new Date().getFullYear()} Contribution Project. All rights
 					reserved.
 				</p>
 				<div className="mt-2 space-x-4">
-					<Link href="#" color="foreground">
+					<Link href="#" className="hover:underline transition-all">
 						Privacy Policy
 					</Link>
-					<Link href="#" color="foreground">
+					<Link href="#" className="hover:underline transition-all">
 						Terms of Service
 					</Link>
 				</div>
-			</div>
+			</motion.div>
 		</footer>
 	);
 }

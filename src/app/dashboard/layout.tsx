@@ -1,17 +1,11 @@
-"use client";
+import { Providers } from "./Providers";
 
-import { ReactNode } from "react";
-import Navbar from "./components/Navbar";
-
-interface DashboardLayoutProps {
-	children: ReactNode;
+interface IDashboardLayoutProps {
+	children: React.ReactNode;
 }
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
-	return (
-		<>
-			<Navbar />
-			{children}
-		</>
-	);
-}
+const DashboardLayout: React.FC<IDashboardLayoutProps> = ({ children }) => {
+	return <Providers>{children}</Providers>;
+};
+
+export default DashboardLayout;

@@ -8,15 +8,16 @@ import { useRouter } from "next/navigation";
 import { Input } from "@heroui/input";
 
 import { EyeFilledIcon, EyeSlashFilledIcon } from "@/src/components/icons";
-import { Link } from "@heroui/link";
+import Link from "next/link";
 import { Button } from "@heroui/button";
 
-import toast, { Toaster } from "react-hot-toast";
+import { addToast } from "@heroui/toast";
 
 const Page = () => {
 	const [isVisible, setIsVisible] = useState(false);
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
+	const [confirmPassword, setConfirmPassword] = useState<string>("");
 	const [error, setError] = useState<string>("");
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const router = useRouter();
@@ -31,7 +32,10 @@ const Page = () => {
 
 			// ✅ Prevent empty email/password submission
 			if (!email || !password) {
-				toast.error("Email and password are required!");
+				addToast({
+					title: "Email and password are required!",
+					color: "danger",
+				});
 				setIsLoading(false);
 				return;
 			}
@@ -43,9 +47,17 @@ const Page = () => {
 			});
 
 			if (result?.error) {
-				toast.error("Invalid credentials");
+				addToast({
+					title: "Invalid Credentials",
+					description: "Please check your email and password",
+					color: "danger",
+				});
 			} else {
-				toast.success("User logged in...");
+				addToast({
+					title: "Login Successful",
+					description: "Redirecting to dashboard...",
+					color: "success",
+				});
 				await router.push("/dashboard"); // ✅ Ensure navigation completes
 			}
 
@@ -141,6 +153,7 @@ const Page = () => {
 							<div className="col-span-6 sm:col-span-3">
 								<Input
 									className="max-w-xs"
+									onChange={(e) => setConfirmPassword(e.target.value)}
 									endContent={
 										<button
 											aria-label="toggle password visibility"
@@ -169,6 +182,11 @@ const Page = () => {
 									variant="flat"
 									type="submit"
 									isLoading={isLoading}
+									isDisabled={
+										password === confirmPassword && password.length > 0
+											? false
+											: true
+									}
 								>
 									Log In
 								</Button>
@@ -177,12 +195,7 @@ const Page = () => {
 									<p className="mt-4 text-sm text-default-700 sm:mt-0">
 										Don&#39;t have an account?
 									</p>
-									<Link
-										href="/auth/register"
-										color="primary"
-										underline="always"
-										showAnchorIcon
-									>
+									<Link href="/auth/register" className="text-blue-500">
 										Sign Up
 									</Link>
 									.
@@ -192,7 +205,6 @@ const Page = () => {
 					</div>
 				</main>
 			</div>
-			<Toaster />
 		</section>
 	);
 };
