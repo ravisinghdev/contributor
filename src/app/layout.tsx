@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { Providers } from "./providers";
 
 import { siteConfig } from "@/src/config/site";
-import { fontSans } from "@/src/config/fonts";
+import { fontRoboto, fontSans } from "@/src/config/fonts";
 import { Suspense } from "react";
 import Loading from "./loading";
 
@@ -38,6 +38,7 @@ export default function RootLayout({
 			<body
 				className={clsx(
 					"min-h-screen bg-background font-sans antialiased",
+					fontRoboto.variable,
 					fontSans.variable
 				)}
 			>
